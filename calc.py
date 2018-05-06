@@ -156,7 +156,7 @@ print_results(profiles, exp_averages, 1)
 results_pr = np.array(prof_averages) / 3.0 + np.array(practices_po) / 3.0 + np.array(exp_averages) / 3.0
 print
 print 'Общая оценка:'
-print_results(profiles, results_pr)
+print_results(profiles, results_pr, 2)
 
 print
 for i in xrange(profiles_cnt):
