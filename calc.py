@@ -26,15 +26,10 @@ def print_results(profiles, res, precision = 1):
         print '{0:>2}. {1:<8}\t{2}'.format(i, r[0], np.round(r[1], precision))
         i += 1
 
-profiles = 'АТС-1:АТС-2:БАС:БДиМО:ВРС:ИБС:ИРС:ИЭС:Нано:НМиС:ППТ:Финтех:VR:Космос:Нейро:Телеком:УД:ЯТ'.split(':')
+profiles = 'Космоснимки:AR:Аэрокосминж:Геном:ИТБез:Кибер:Когнит:Композ:НаучКом:Ракеты'.split(':')
 profiles_cnt = len(profiles)
-scores_exp = (3, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+scores_exp = (3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 4)
 experts_params_cnt = len(scores_exp)
-scores_po = (2, 1, 1.5, 1.5, 1, 1, 1, 1, 1.5, 0.5, 2, 5)
-po_params_cnt = len(scores_po)
-scores_places = (3, 3)
-places_params_cnt = len(scores_places)
-scores_kids = 6
 
 experts = []
 for exp_file in glob.glob('exp-*.csv'):
@@ -42,25 +37,20 @@ for exp_file in glob.glob('exp-*.csv'):
     exp_data = read_file(exp_file, experts_params_cnt, profiles_cnt)
     experts.append(exp_data)
 exp_averages = []
+exp_votes = []
 for profile_idx in xrange(profiles_cnt):
     exp_averages.append([])
+    v = 0
     for param in xrange(experts_params_cnt):
         a = []
         for e in experts:
             x = e[param][profile_idx]
             if x >= 0: 
                 a.append(x)
+                v += 1
         npa = np.array(a)
         exp_averages[-1].append(np.average(npa))
-      
-po = read_file('po.csv', po_params_cnt, profiles_cnt)
-
-kids = read_file('kids.csv', profiles_cnt)
-kids_averages = []
-for p_idx in xrange(profiles_cnt):
-    avg = np.average(np.array(kids[p_idx]))
-    kids_averages.append(avg)
-
+    exp_votes.append(v)
 print 'Общая оценка профилей:'
 print '----------------------'
 
@@ -69,52 +59,6 @@ print
 print 'Оценка экспертов:'
 print_results(profiles, results1)
 
-results2 = np.dot(np.array(po).transpose(), np.array(scores_po))
-print
-print 'Оценка ПО:'
-print_results(profiles, results2)
-
-places_avg_1 = []
-places_avg_2 = []
-places1 = read_file('places1.csv', None, profiles_cnt)
-places2 = read_file('places2.csv', None, profiles_cnt)
-assert len(places1) == len(places2)
-for profile_idx in xrange(profiles_cnt):
-    a = []
-    for p in places1:
-        x = p[profile_idx]
-        if x >= 0:
-            a.append(x)
-    if len(a) > 0:
-        avg = np.average(np.array(a))
-    else:
-        avg = 5
-    places_avg_1.append(avg)
-    a = []
-    for p in places2:
-        x = p[profile_idx]
-        if x >= 0:
-            a.append(x)
-    if len(a) > 0:
-        avg = np.average(np.array(a))
-    else:
-        avg = 5
-    places_avg_2.append(avg)
-results3 = np.array(places_avg_1).transpose() * scores_places[0] + np.array(places_avg_2).transpose() * scores_places[1]
-print
-print 'Оценка площадок подготовки:'
-print_results(profiles, results3)
-
-results4 = scores_kids * np.array(kids_averages)
-print
-print 'Оценка участников:'
-print_results(profiles, results4)
-    
-results = results1 + results2 + results4
-print
-print 'Общая оценка:'
-print_results(profiles, results)
-    
 print
 print
 print 'Практики будущего:'
@@ -160,13 +104,10 @@ print_results(profiles, results_pr, 2)
 
 print
 for i in xrange(profiles_cnt):
-    print "{0}:{1}:{2}:{3}:{4}:{5}:{6}:{7}:{8}:{9}".format(profiles[i],
-                                                           round(results1[i], 1),
-                                                           round(results2[i], 1),
-                                                           round(results3[i], 1),
-                                                           round(results4[i], 1),
-                                                           round(results[i], 1),
-                                                           round(prof_averages[i], 2),
-                                                           round(practices_po[i], 2),
-                                                           round(exp_averages[i], 2),
-                                                           round(results_pr[i], 2))
+    print "{0}:{1}:{2}:{3}:{4}:{5}".format(profiles[i],
+                                           round(results1[i], 1),
+                                           round(prof_averages[i], 2),
+                                           round(practices_po[i], 2),
+                                           round(exp_averages[i], 2),
+                                           round(results_pr[i], 2))
+    
