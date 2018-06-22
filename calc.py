@@ -26,6 +26,15 @@ def print_results(profiles, res, precision = 1):
         print '{0:>2}. {1:<8}\t{2}'.format(i, r[0], np.round(r[1], precision))
         i += 1
 
+def print_matrix(profiles, m, precision = 1):
+    rows = len(m[0])
+    print(':' + ':'.join(profiles))
+    for i in xrange(rows):
+        a = ["{0}".format(i)]
+        for prof in m:
+            a.append("{0}".format(np.round(prof[i], precision)))
+        print ':'.join(a)
+        
 profiles = 'Космоснимки:AR:Аэрокосминж:Геном:ИТБез:Кибер:Когнит:Композ:НаучКом:Ракеты'.split(':')
 profiles_cnt = len(profiles)
 scores_exp = (3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 4)
@@ -55,6 +64,8 @@ print 'Общая оценка профилей:'
 print '----------------------'
 
 results1 = np.dot(np.array(exp_averages), np.array(scores_exp))
+print 'Средние оценки экспертов:'
+print_matrix(profiles, exp_averages)
 print
 print 'Оценка экспертов:'
 print_results(profiles, results1)
